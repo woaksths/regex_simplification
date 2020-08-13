@@ -2,3 +2,4 @@ jupyter
 jupyterlab
 ipython==7.9
 future
+rstr
