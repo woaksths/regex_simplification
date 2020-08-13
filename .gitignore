@@ -1,0 +1,7 @@
+fado-python3
+
+venv/
+env/
+.ipynb_checkpoints/
+.tablereg
+*ipynb
