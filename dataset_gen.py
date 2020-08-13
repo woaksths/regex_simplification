@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+
 from FAdo.fa import *
 from FAdo.reex import *
+import pickle
 
 
 def get_dfa_from_re(regex):
@@ -51,5 +53,13 @@ def generate_eq_regexes(regex):
     return regex_set
 
 
-regex_set = generate_eq_regexes('10+101+11')
-print(regex_set)
+with open('regex_set.txt','r') as rf:
+    regex_set = rf.read().split('\n')
+    pair_dataset = []
+    for regex in regex_set:
+        if len(get_dfa_from_re(regex).States) <= 8:
+            pair_dataset.append(generate_eq_regexes(regex))
+
+
+with open('pair_dataset.pickle', 'wb') as f:
+    pickle.dump(pair_dataset, f, pickle.HIGHEST_PROTOCOL)
