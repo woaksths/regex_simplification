@@ -57,7 +57,7 @@ with open('regex_set.txt','r') as rf:
     regex_set = rf.read().split('\n')
     pair_dataset = []
     for regex in regex_set:
-        if len(get_dfa_from_re(regex).States) <= 8:
+        if len(get_dfa_from_re(regex).States) <= 10:
             pair_dataset.append(generate_eq_regexes(regex))
 
 
