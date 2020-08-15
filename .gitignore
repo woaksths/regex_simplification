@@ -5,3 +5,5 @@ env/
 .ipynb_checkpoints/
 .tablereg
 *ipynb
+__pycache__/
+dataset/

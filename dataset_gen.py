@@ -5,6 +5,12 @@
 from FAdo.fa import *
 from FAdo.reex import *
 import pickle
+import argparse
+
+
+parser = argparse.ArgumentParser(description='')
+parser.add_argument('--path', required=True, help='dataset path')
+args = parser.parse_args()
 
 
 def get_dfa_from_re(regex):
@@ -43,23 +49,29 @@ def generate_eq_regexes(regex):
     regex_set['origin'] = regex
     regex_set['complex'] = set()
     # mdfa regex 
-    regex_set['complex'].add(str(dfa.dup().minimal().reCG().reduced()))
+    regex_set['complex'].add(str(dfa.dup().minimal().reCG().reduced()).replace(' ',''))
     # state elimination 
     for order in states_order:
         st_idx_order = (list(map(int, order.split(' '))))
         dfa_temp = dfa.dup()
-        generated_re = str(dfa_temp.re_stateElimination(st_idx_order).reduced())
+        generated_re = str(dfa_temp.re_stateElimination(st_idx_order).reduced()).replace(' ','')
         regex_set['complex'].add(generated_re)
     return regex_set
 
 
-with open('regex_set.txt','r') as rf:
-    regex_set = rf.read().split('\n')
+input_file = args.path
+output_file = args.path.split('.')[0] +'_dataset.pickle'
+
+
+with open(input_file,'rb') as rf:
+    regex_set = pickle.load(rf)
     pair_dataset = []
-    for regex in regex_set:
-        if len(get_dfa_from_re(regex).States) <= 10:
+    for idx, regex in enumerate(regex_set):
+        print('current {} th '.format(idx))
+        if len(get_dfa_from_re(regex).States) <= 8:
+            print('processing {} th regex {}'.format(idx,regex))
             pair_dataset.append(generate_eq_regexes(regex))
 
-
-with open('pair_dataset.pickle', 'wb') as f:
+            
+with open(output_file, 'wb') as f:
     pickle.dump(pair_dataset, f, pickle.HIGHEST_PROTOCOL)
