@@ -3,3 +3,11 @@ jupyterlab
 ipython==7.9
 future
 rstr
+torch
+numpy
+dill
+tqdm
+torchtext
+matplotlib
+xeger
+
