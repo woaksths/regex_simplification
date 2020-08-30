@@ -86,7 +86,7 @@ else:
     optimizer = None
     if not opt.resume:
         # Initialize model
-        hidden_size=128
+        hidden_size= opt.hidden_dim
         bidirectional = True
         encoder = EncoderRNN(len(src.vocab), max_len, hidden_size, n_layers = opt.num_layer,
                              bidirectional=bidirectional, variable_lengths=True, input_vocab = input_vocab)
