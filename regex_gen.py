@@ -22,12 +22,12 @@ def check_valid(regex):
     return is_valid
 
 
-def complex_re_gen(max_size):
+def complex_re_gen(max_size, height=None):
     complex_dataset = set()
     while True:
         if len(complex_dataset) >0 and len(complex_dataset) % 1000 == 0:
             print('complex: current processing {}th data'.format(len(complex_dataset)))
-        depth = random.randrange(2,6)
+        depth = random.randrange(1,6)
         opening_nested = ''.join(['(' + rstr.rstr('01+*',0,5) for _ in range(depth)]) 
         closing_nested = ''.join([rstr.rstr('01+*',0,5)+ ')' for _ in range(depth)])  
         regex= rstr.rstr('01+',0,15) + opening_nested + closing_nested + rstr.rstr('01+',0,15)
@@ -39,7 +39,7 @@ def complex_re_gen(max_size):
             regex = re_obj.reduce(re_obj.output)
             star_height = str2regexp(regex).measure()[3]
 
-            if star_height > 1 and len(str2regexp(regex).toDFA().States) < 10 and len(regex) < 35:
+            if star_height == height and len(str2regexp(regex).toDFA().States) < 10 and len(regex) < 35:
                 complex_dataset.add(regex)
         if len(complex_dataset) == max_size:
             break
@@ -63,23 +63,28 @@ def simple_re_gen(max_size):
         regex = re_obj.reduce(re_obj.output)
         star_height = str2regexp(regex).measure()[3]
 
-        if star_height <= 1 and len(str2regexp(regex).toDFA().States) < 10 and len(regex) <35:    
+        if star_height < 1 and len(str2regexp(regex).toDFA().States) < 10 and len(regex) <35:    
             simple_regexs.add(regex)
         if len(simple_regexs) == max_size:
             break
     return simple_regexs
 
 
-complex_regexs = complex_re_gen(40000)
-simple_regexs = simple_re_gen(80000)
+# star_height0_regexs = simple_re_gen(50000)
+# star_height1_regexs = complex_re_gen(50000, 1)
+# star_height2_regexs = complex_re_gen(50000, 2)
 
-total_regexs = simple_regexs | complex_regexs
+star_height3_regexs = complex_re_gen(50000, 3)
 
-with open('simple_regexs2.pickle', 'wb') as f:
-    pickle.dump(simple_regexs, f, pickle.HIGHEST_PROTOCOL)
+with open('star_height3_regexs.pickle', 'wb') as f:
+    pickle.dump(star_height3_regexs, f, pickle.HIGHEST_PROTOCOL)
+    
+    
+# with open('star_height0_regexs.pickle', 'wb') as f:
+#     pickle.dump(star_height0_regexs, f, pickle.HIGHEST_PROTOCOL)
 
-with open('complex_regexs2.pickle', 'wb') as f:
-    pickle.dump(complex_regexs, f, pickle.HIGHEST_PROTOCOL)
+# with open('star_height1_regexs.pickle', 'wb') as f:
+#     pickle.dump(star_height1_regexs, f, pickle.HIGHEST_PROTOCOL)
 
-with open('total_regexs2.pickle', 'wb') as f:
-    pickle.dump(total_regexs, f, pickle.HIGHEST_PROTOCOL)
+# with open('star_height2_regexs.pickle', 'wb') as f:
+#     pickle.dump(star_height2_regexs, f, pickle.HIGHEST_PROTOCOL)

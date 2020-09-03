@@ -6,7 +6,7 @@ from FAdo.fa import *
 from FAdo.reex import *
 import pickle
 import argparse
-
+from infix_to_postfix import Conversion, preprocessing_concat
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--path', required=True, help='dataset path')
@@ -49,12 +49,18 @@ def generate_eq_regexes(regex):
     regex_set['origin'] = regex
     regex_set['complex'] = set()
     # mdfa regex 
-    regex_set['complex'].add(str(dfa.dup().minimal().reCG().reduced()).replace(' ',''))
+    #regex_set['complex'].add(str(dfa.dup().minimal().reCG().reduced()).replace(' ',''))
     # state elimination 
     for order in states_order:
         st_idx_order = (list(map(int, order.split(' '))))
         dfa_temp = dfa.dup()
         generated_re = str(dfa_temp.re_stateElimination(st_idx_order).reduced()).replace(' ','')
+        if 'epsilon' in generated_re:
+            continue
+        generated_re = preprocessing_concat(generated_re)
+        re_obj = Conversion(len(generated_re))
+        re_obj.infixToPostfix(generated_re)
+        generated_re = re_obj.reduce(re_obj.output)
         regex_set['complex'].add(generated_re)
     return regex_set
 
