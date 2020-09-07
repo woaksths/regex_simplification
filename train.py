@@ -108,7 +108,7 @@ else:
         # optimizer.set_scheduler(scheduler)
     # train
     opt.expt_dir = opt.expt_dir + "_hidden:{}_n_layers:{}".format(opt.hidden_dim, opt.num_layer)
-    t = SupervisedTrainer(loss=loss, batch_size=512,
+    t = SupervisedTrainer(loss=loss, batch_size=128,
                           checkpoint_every=100,
                           print_every=300, expt_dir=opt.expt_dir, input_vocab = input_vocab, output_vocab = output_vocab)
     

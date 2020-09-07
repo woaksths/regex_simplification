@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-
 from FAdo.fa import *
 from FAdo.reex import *
 import pickle
 import argparse
 from infix_to_postfix import Conversion, preprocessing_concat
+import multiprocessing as mp
 
 parser = argparse.ArgumentParser(description='')
 parser.add_argument('--path', required=True, help='dataset path')
 args = parser.parse_args()
 
+input_file = args.path
+output_file = args.path.split('.')[0] +'_dataset.pickle'
 
 def get_dfa_from_re(regex):
     regex= str2regexp(regex)
@@ -67,21 +69,20 @@ def generate_eq_regexes(regex):
     return regex_set
 
 
-input_file = args.path
-output_file = args.path.split('.')[0] +'_dataset.pickle'
-
-
+def task(idx, regex):
+    print('current {} th '.format(idx))
+    try:
+        if len(get_dfa_from_re(regex).States) <= 10:
+            print('processing {} th regex {}'.format(idx,regex))
+            return generate_eq_regexes(regex)
+    except:
+        print('********error occur********')
+    
 with open(input_file,'rb') as rf:
     regex_set = pickle.load(rf)
     pair_dataset = []
-    for idx, regex in enumerate(regex_set):
-        print('current {} th '.format(idx))
-        if len(get_dfa_from_re(regex).States) <= 10:
-            print('processing {} th regex {}'.format(idx,regex))
-            res = generate_eq_regexes(regex)
-            if res is None:
-                continue
-            pair_dataset.append(res)
+    with mp.Pool() as p:
+        pair_dataset = p.starmap(task, enumerate(regex_set))
 
             
 with open(output_file, 'wb') as f:
