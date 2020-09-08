@@ -11,6 +11,11 @@ def filewrite(dataset, fname):
                 fw.write(data +'\n')
 
                 
+def preprocessing(string):                
+    string = [char for char in string]
+    return ' '.join(string)
+                
+                
 def generating_train_valid_test(pair_dataset):
     train_set = []
     valid_set = []
@@ -33,10 +38,11 @@ def generating_train_valid_test(pair_dataset):
         test = complex_re_set[valid_ratio:valid_ratio+test_ratio]
         train = complex_re_set[valid_ratio+test_ratio:]
         
-        test_pair = [d + '\t' + simple_re for d in test]
-        valid_pair = [d + '\t' + simple_re for d in valid]
-        train_pair = [d + '\t' + simple_re for d in train]
-
+        
+        test_pair = [preprocessing(d) + '\t' + preprocessing(simple_re) for d in test]
+        valid_pair = [preprocessing(d) + '\t' + preprocessing(simple_re) for d in valid]
+        train_pair = [preprocessing(d) + '\t' + preprocessing(simple_re) for d in train]
+        
         train_set.extend(train_pair)
         valid_set.extend(valid_pair)
         test_set.extend(test_pair)

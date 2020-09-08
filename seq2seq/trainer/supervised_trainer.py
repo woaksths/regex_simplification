@@ -79,6 +79,7 @@ class SupervisedTrainer(object):
         epoch_loss_total = 0  # Reset every epoch
 
         device = torch.device('cuda:0') if torch.cuda.is_available() else -1
+
         batch_iterator = torchtext.data.BucketIterator(
             dataset=data, batch_size=self.batch_size,
             sort=False, sort_within_batch=True,
